@@ -41,10 +41,6 @@ This document borrows heavily from:
 * [Web API Design](http://pages.apigee.com/web-api-design-ebook.html), by Brian Mulloy, Apigee
 * [Fielding's Dissertation on REST](http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm)
 
-## Business logic
-Before jumping into implementing API, you need to define business logic. Use API Model Canvas to think over why API is created, for whom, how are developers taken into account, metrics and all. 
-![API Model Canvas](https://raw.githubusercontent.com/Digipalvelutehdas/API-Guide-Lines/master/api-model-canvas.png)
-
 ## Design-First
 
 API development should be design-first driven when ever possible. All APIs must have machine reabadle and public specification. 
@@ -56,12 +52,12 @@ Use national vocabularies is data modeling. This in long term creates semantic i
 
 Resources:
 * [iow.csc.fi](http://iow.csc.fi/#/)
+* [Finnish vocabularies and ontologies](http://finto.fi/fi/)
 
 ## Documentation
 [Good documentation](http://launchany.com/10-questions-your-api-document-must-answer/) answers to following questions:
 * What can I do (and not do) With Your API?
 * Does Your API Fit my Company’s Needs?
-* How Much Does it Cost?
 * How Does Your API View my World?
 * How do You Secure Your API?
 * How Long Will it Take to Get Started?
