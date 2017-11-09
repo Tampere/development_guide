@@ -90,7 +90,7 @@ Try your best to make your API as developer friendly and approachable as possibl
 * Consistent and meaningful naming conventions
 * Simple usage examples
 * Perhaps even specific online community tools, such as Slack channel, Discuss, or even IRC
-* Make sure the error messages your API returns are explicit and on the point The error object might have a link to a documentation of the possible reasons it occurred
+* Make sure the error messages your API returns are explicit and on the point. The error object might have a link to a documentation of the possible reasons it occurred
 
 ## Pragmatic REST
 
@@ -146,6 +146,10 @@ The guidelines aim to support a truly RESTful API. Here are a few exceptions:
   * [http://www.example.gov/magazine/1234/create](http://www.example.gov/magazine/1234/create)
 * Filter outside of query string
   * [http://www.example.gov/magazines/2011/desc](http://www.example.gov/magazines/2011/desc)
+
+#### Query filters
+
+Use consistent and meaningful names. A good query filter names can be for example `startDate`, `endDate` and `distance`. Avoid using hyphens, dashes or underscores.
 
 ## HTTP Verbs
 
@@ -213,6 +217,8 @@ The naming conventions here differ. Some use `meta` and `data`, others `results`
 
 Using resource-specific naming makes it difficult to consume the API without any real benefits. The developer must know by now what the results are a representation of.
 
+The metadata could also include the used query filter parameters.
+
 ## Error handling
 
 Error responses should include a common HTTP status code, message for the developer, message for the end-user (when appropriate), internal error code (corresponding to some specific internally determined ID), links where developers can find more info. For example:
@@ -231,7 +237,14 @@ Use three simple, common response codes indicating (1) success, (2) failure due 
 * 400 - Bad Request
 * 500 - Internal Server Error
 
-For some status codes the exact HTTP response code is the perfect explanation to the user as to why the request failed. If the API requires, for example, authentication, a 403 Unauthenticated tells the developer precisely what the issue was. The moreInfo -attribute could then point to a method of acquiring authentication credentials and the developerMessage -attribute could tell the developer to include a Authorization -header on all authenticable methods.
+For some status codes the exact HTTP response code is the perfect explanation to the user as to why the request failed. If the API requires, for example, authentication, a 403 Unauthenticated tells the developer precisely what the issue was. The moreInfo -attribute could then point to a method of acquiring authentication credentials and the developerMessage -attribute could tell the developer to include a Authorization -header on all authenticable methods. Also a 404 Not Found is perfectly clear as a status.
+
+For simple read-only APIs the full error object might be an overkill. Sometimes just a status and message might suffice.
+
+    {
+      "status" : 404,
+      "message" : "The resource you have requested can not be found."
+    }
 
 ## Versions
 
@@ -360,6 +373,10 @@ It is suggested that each resource accept a 'mock' parameter on the testing serv
 Implementing this feature early in development ensures that the API will exhibit consistent behavior, supporting a test driven development methodology.
 
 Note: If the mock parameter is included in a request to the production environment, an error should be raised.
+
+### Development testing API
+
+Instead of mocking responses based on a parameter, you may also provide a separate development testing API or a testing API token. These would not change the state of the production database.
 
 ## JSONP
 
