@@ -55,20 +55,6 @@ Use national vocabularies in data modeling. This in long term creates semantic i
 * [iow.csc.fi](http://iow.csc.fi/#/)
 * [Finnish vocabularies and ontologies](http://finto.fi/fi/)
 
-### Identifiers
-
-It is generally not a good practice to default to using auto-incrementing numeric ids for all resources. An id of 1 usually does not correlate to the actual resource in any ways. Natural ids can give more meaning to the user.
-
-#### Good identifier
-
-* /racetracks/Teivo
-
-#### Bad identifier
-
-* /racetracks/1
-
-Not using auto-incrementing ids can also help you by making database migrations easier maintaining data consistency better.
-
 ## Documentation
 
 [Good documentation](http://launchany.com/10-questions-your-api-document-must-answer/) answers to following questions:
@@ -81,6 +67,8 @@ Not using auto-incrementing ids can also help you by making database migrations 
 * Do You Offer SDKs?
 * What API Endpoints and Event Integrations Does Your API Offer?
 * Why am I Getting This Error Code or Unexpected Response?
+
+Often it is best to offer an interactive documentation such as Swagger, that can create API calls and display results within the documentation.
 
 ## Developer eXperience
 
@@ -146,6 +134,20 @@ The guidelines aim to support a truly RESTful API. Here are a few exceptions:
   * [http://www.example.gov/magazine/1234/create](http://www.example.gov/magazine/1234/create)
 * Filter outside of query string
   * [http://www.example.gov/magazines/2011/desc](http://www.example.gov/magazines/2011/desc)
+
+### Identifiers
+
+It is generally not a good practice to default to using auto-incrementing numeric ids for all resources. An id of 1 usually does not correlate to the actual resource in any ways. Natural ids can give more meaning to the user.
+
+#### Good identifier
+
+* /racetracks/Teivo
+
+#### Bad identifier
+
+* /racetracks/1
+
+Not using auto-incrementing ids can also help you by making database migrations easier maintaining data consistency better.
 
 #### Query filters
 
@@ -218,6 +220,29 @@ The naming conventions here differ. Some use `meta` and `data`, others `results`
 Using resource-specific naming makes it difficult to consume the API without any real benefits. The developer must know by now what the results are a representation of.
 
 The metadata could also include the used query filter parameters.
+
+#### Resultsets for human-readable results and transfer minification
+
+If the use-case requires to potentionally return hundreds of rows of data, it is usually best to paginate the results into resultsets or pages. This can lower the amount of data the end users needs to transfer per request. The pagination limit (count of items per page) should
+be customizable via request parameters, e.g. `&limit=60`.
+
+HAETOAS should be taken into account. This means hyperlinking any relations for easy human navigation of data as well as
+rapid application development. 
+    
+    {
+      "id" : "teivo",
+      "name": "Teivo race track",
+      "events" : [
+          {
+            "id": "teivo-thursdays",
+            "url": "http://example.com/v1/events/teivo-thursdays"
+          },
+          {
+            "id": "teivo-birthday",
+            "url": "http://example.com/v1/events/teivo-birthday"
+          }
+      ]
+    }
 
 ## Error handling
 
@@ -378,36 +403,6 @@ Note: If the mock parameter is included in a request to the production environme
 
 Instead of mocking responses based on a parameter, you may also provide a separate development testing API or a testing API token. These would not change the state of the production database.
 
-## JSONP
-
-JSONP is easiest explained with an example. Here's one from [StackOverflow](http://stackoverflow.com/questions/2067472/what-is-jsonp-all-about?answertab=votes#tab-top):
-
-> Say you're on domain abc.com, and you want to make a request to domain xyz.com. To do so, you need to cross domain boundaries, a no-no in most of browserland.
-
-> The one item that bypasses this limitation is `<script>` tags. When you use a script tag, the domain limitation is ignored, but under normal circumstances, you can't really DO anything with the results, the script just gets evaluated.
-
-> Enter JSONP. When you make your request to a server that is JSONP enabled, you pass a special parameter that tells the server a little bit about your page. That way, the server is able to nicely wrap up its response in a way that your page can handle.
-
-> For example, say the server expects a parameter called "callback" to enable its JSONP capabilities. Then your request would look like:
-
->         http://www.xyz.com/sample.aspx?callback=mycallback
-
-> Without JSONP, this might return some basic javascript object, like so:
-
->         { foo: 'bar' }
-
-> However, with JSONP, when the server receives the "callback" parameter, it wraps up the result a little differently, returning something like this:
-
->         mycallback({ foo: 'bar' });
-
-> As you can see, it will now invoke the method you specified. So, in your page, you define the callback function:
-
->         mycallback = function(data){
->             alert(data.foo);
->         };
-
-[http://stackoverflow.com/questions/2067472/what-is-jsonp-all-about?answertab=votes#tab-top](http://stackoverflow.com/questions/2067472/what-is-jsonp-all-about?answertab=votes#tab-top)
-
 ## CORS
 
 Alternative to JSONP is CORS - Cross-Origin Resource Sharing. APIs are the threads that let you stitch together a rich web experience. But this experience has a hard time translating to the browser, where the options for cross-domain requests are limited to techniques like JSON-P (which has limited use due to security concerns) or setting up a custom proxy (which can be a pain to set up and maintain).
@@ -425,3 +420,13 @@ If the API offers really frequently updating data that takes a lot of processing
 You may also enforce rate limiting where necessary as long as it doesn't render the whole API obsolete. This needs to be evaluated per each use case.
 
 If the data is not really frequently updated, but the data mass is great, you probably should consider caching the results.
+
+## Authorization
+
+Some API's are fully open and anonymous. This means that the user is not required to authenticate. Some use cases might require per-user authentication with account credentials.
+
+If the API is intended for developer use, per-user authentication might not be viable. Again, if the API has writeable endpoints or it is necessary to limit the amount of requests, developer may be given API tokens for per-application authorization. These could be included in each request as a header `Authrorization: Bearer <token>` or as an `api_key` or `api_token` request field. This allows for rate-limiting, use tracking and application rejection. 
+
+Make sure the api token can be easily acquired (e.g. developer portal, API management service) and easily reset in case the api token leaks (e.g. accidental push to GitHub).
+
+Requesting an api token via email is not good developer experience.
