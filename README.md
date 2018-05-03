@@ -425,7 +425,7 @@ If the data is not really frequently updated, but the data mass is great, you pr
 
 Some API's are fully open and anonymous. This means that the user is not required to authenticate. Some use cases might require per-user authentication with account credentials.
 
-If the API is intended for developer use, per-user authentication might not be viable. Again, if the API has writeable endpoints or it is necessary to limit the amount of requests, developer may be given API tokens for per-application authorization. These could be included in each request as a header `Authrorization: Bearer <token>` or as an `api_key` or `api_token` request field. This allows for rate-limiting, use tracking and application rejection. 
+If the API is intended for developer use, per-user authentication might not be viable. Again, if the API has writeable endpoints or it is necessary to limit the amount of requests, developer may be given API tokens for per-application authorization. These could be included in each request as a header `Authorization: Bearer <token>` or as an `api_key` or `api_token` request field. This allows for rate-limiting, use tracking and application rejection. 
 
 Make sure the api token can be easily acquired (e.g. developer portal, API management service) and easily reset in case the api token leaks (e.g. accidental push to GitHub).
 
